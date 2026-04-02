@@ -46,8 +46,12 @@ class Data_fetcher:
                 next(reader)
 
                 for row in reader:
-                    close_price = float(row[1]) # skipped the indexes and viewed the absolute index of close
-                    prices.append(close_price)
+                    try:
+                        if row and len(row) > 1 and row[1].strip():
+                            close_price = float(row[1]) # skipped the indexes and viewed the absolute index of close
+                            prices.append(close_price)
+                    except ValueError:
+                        continue
                 
                 return prices
         
