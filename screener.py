@@ -453,7 +453,7 @@ if __name__ == "__main__":
 
     symbols = []
 
-    with open (f'NAMES\\{sector}.csv','r') as file:
+    with open(os.path.join('NAMES', f'{sector}.csv'), 'r') as file:
         reader = csv.reader(file)
 
         for row in reader :

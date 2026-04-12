@@ -195,20 +195,33 @@ st.markdown("""
 
 def get_available_sectors():
     sectors = []
-    names_dir = os.path.join(os.path.dirname(__file__), "NAMES")
+    # Force absolute path detection for Cloud
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    names_dir = os.path.join(current_dir, "NAMES")
+    
     if os.path.exists(names_dir):
         for f in os.listdir(names_dir):
-            if f.endswith(".csv"): sectors.append(f.replace(".csv", ""))
-    return sorted(sectors)
+            if f.endswith(".csv"):
+                # Always return exact filename base to avoid case mismatch on Linux
+                sectors.append(f[:-4])
+    return sorted(list(set(sectors)))
 
 def load_symbols(sector):
     symbols = []
-    filepath = os.path.join(os.path.dirname(__file__), "NAMES", f"{sector}.csv")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # Linux is case-sensitive! We must append .csv exactly.
+    filepath = os.path.join(current_dir, "NAMES", f"{sector}.csv")
+    
     if os.path.exists(filepath):
         with open(filepath, "r") as file:
             reader = csv.reader(file)
             for row in reader:
-                if row: symbols.append(row[0])
+                if row and row[0].strip():
+                    sym = row[0].strip()
+                    # Append .NS if missing to ensure yfinance/screener logic works
+                    if not sym.endswith(".NS") and "^" not in sym:
+                        sym += ".NS"
+                    symbols.append(sym)
     return symbols
 
 
@@ -290,7 +303,7 @@ def load_saved_combos():
     if os.path.exists(COMBOS_FILE):
         try:
             with open(COMBOS_FILE, "r") as f: return json.load(f)
-        except: return []
+        except (json.JSONDecodeError, IOError): return []
     return []
 def save_combos(combos):
     with open(COMBOS_FILE, "w") as f: json.dump(combos, f, indent=2)
@@ -317,7 +330,7 @@ def get_env_state():
             with open(os.path.join(data_dir, price_files[0]), 'r') as f:
                 header = next(csv.reader(f), [])
                 is_merged = "DeliveryVolume" in header
-        except: pass
+        except (IOError, StopIteration): pass
         
     return {
         "has_prices": has_prices,
@@ -331,6 +344,13 @@ if "page" not in st.session_state: st.session_state.page = "scans"
 if "active_scan" not in st.session_state: st.session_state.active_scan = None
 if "active_combo" not in st.session_state: st.session_state.active_combo = None
 if "creating_combo" not in st.session_state: st.session_state.creating_combo = False
+if "selected_sector" not in st.session_state: st.session_state.selected_sector = None
+
+# ─── Pre-load sectors so selected_sector is always defined before sidebar renders ─
+_all_sectors = get_available_sectors()
+if not _all_sectors:
+    st.error("❌ No sector files found in NAMES/ folder. Please add at least one .csv sector file.")
+    st.stop()
 
 with st.sidebar:
     st.markdown('<div class="sidebar-logo">TERMINAL_v1.2</div>', unsafe_allow_html=True)
@@ -350,7 +370,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    sectors = get_available_sectors()
+    sectors = _all_sectors
     selected_sector = st.selectbox("REGION_SELECT", sectors, index=0)
     st.markdown("---")
     
@@ -380,8 +400,23 @@ with st.sidebar:
             st.success(f"SUCCESS: {count} STOCKS READY")
             st.rerun()
 
+    # ─── ENGINE DIAGNOSTICS ──────────────────────────────────────────────────
+    with st.sidebar.expander("🛠️ ENGINE_DIAGNOSTICS"):
+        st.write(f"**BASE_DIR:** `{BASE_DIR}`")
+        st.write(f"**SECTOR:** `{selected_sector}`")
+        if state['has_prices']:
+            st.write(f"**FILES FOUND:** {state['price_count']}")
+            _diag_data_dir = os.path.join(BASE_DIR, "data")
+            sample = os.listdir(_diag_data_dir)[:5]
+            st.write(f"**SAMPLES:** `{sample}`")
+        else:
+            st.write("❌ **DATA_DIR EMPTY**")
+        # symbols is loaded after the sidebar block — show sector info instead
+        st.write(f"**SECTOR FILE:** `NAMES/{selected_sector}.csv`")
+
+# ─── Load symbols and run screener (outside sidebar, uses selected_sector from above) ─
 symbols = load_symbols(selected_sector)
-data_dir = os.path.join(os.path.dirname(__file__), "data")
+data_dir = os.path.join(BASE_DIR, "data")  # Always use BASE_DIR, not __file__ inline
 results = []
 if symbols and os.path.exists(data_dir):
     with st.spinner("EXECUTING_ENGINE..."): results = run_screener(symbols, data_dir)
