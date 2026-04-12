@@ -8,7 +8,11 @@ import base64
 from screener import Stock, Data_fetcher, Screener, download_data, merge_delivery_data, download_bhavcopies, run_screener
 
 # ─── Directory Initialization ──────────────────────────────────────────────────
+<<<<<<< HEAD
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+=======
+BASE_DIR = os.path.dirname(__file__)
+>>>>>>> 6f13ce0 (initial commit with all files)
 for folder in ["NAMES", "data", "icons"]:
     os.makedirs(os.path.join(BASE_DIR, folder), exist_ok=True)
 
@@ -141,10 +145,14 @@ st.markdown("""
         background: #161b22; border: 1px solid #30363d; border-radius: 4px;
         padding: 0.8rem; margin-bottom: 1rem;
     }
+<<<<<<< HEAD
     .health-item { 
         display: flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-bottom: 4px;
         color: #f0f6fc !important; font-weight: 700; font-family: 'JetBrains Mono', monospace;
     }
+=======
+    .health-item { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-bottom: 4px; }
+>>>>>>> 6f13ce0 (initial commit with all files)
     .status-dot { width: 8px; height: 8px; border-radius: 50%; }
     .status-ok { background: #39d353; box-shadow: 0 0 8px #39d353; }
     .status-empty { background: #f85149; box-shadow: 0 0 8px #f85149; }
@@ -195,6 +203,7 @@ st.markdown("""
 
 def get_available_sectors():
     sectors = []
+<<<<<<< HEAD
     # Use global BASE_DIR for consistency
     names_dir = os.path.join(BASE_DIR, "NAMES")
     
@@ -210,16 +219,31 @@ def load_symbols(sector):
     # Linux is case-sensitive! We must append .csv exactly.
     filepath = os.path.join(BASE_DIR, "NAMES", f"{sector}.csv")
     
+=======
+    names_dir = os.path.join(os.path.dirname(__file__), "NAMES")
+    if os.path.exists(names_dir):
+        for f in os.listdir(names_dir):
+            if f.endswith(".csv"): sectors.append(f.replace(".csv", ""))
+    return sorted(sectors)
+
+def load_symbols(sector):
+    symbols = []
+    filepath = os.path.join(os.path.dirname(__file__), "NAMES", f"{sector}.csv")
+>>>>>>> 6f13ce0 (initial commit with all files)
     if os.path.exists(filepath):
         with open(filepath, "r") as file:
             reader = csv.reader(file)
             for row in reader:
+<<<<<<< HEAD
                 if row and row[0].strip():
                     sym = row[0].strip()
                     # Append .NS if missing to ensure yfinance/screener logic works
                     if not sym.endswith(".NS") and "^" not in sym:
                         sym += ".NS"
                     symbols.append(sym)
+=======
+                if row: symbols.append(row[0])
+>>>>>>> 6f13ce0 (initial commit with all files)
     return symbols
 
 
@@ -286,7 +310,11 @@ for cat_key, cat in SCAN_CATEGORIES.items():
 def _get_icon_b64(data_key):
     for ext, mime in [(".svg", "image/svg+xml"), (".png", "image/png")]:
         safe_name = data_key.replace(":", "").replace("/", "").replace("%", "pct").replace(">", "gt").replace(" ", "_")
+<<<<<<< HEAD
         icon_path = os.path.join(BASE_DIR, "icons", f"{safe_name}{ext}")
+=======
+        icon_path = os.path.join(os.path.dirname(__file__), "icons", f"{safe_name}{ext}")
+>>>>>>> 6f13ce0 (initial commit with all files)
         if os.path.exists(icon_path):
             with open(icon_path, "rb") as f: return f"data:{mime};base64,{base64.b64encode(f.read()).decode('utf-8')}"
     return None
@@ -296,12 +324,20 @@ def _count_all_scans_in_category(cat):
     for sub in cat.get("subcategories", {}).values(): count += len(sub["scans"])
     return count
 
+<<<<<<< HEAD
 COMBOS_FILE = os.path.join(BASE_DIR, "saved_combos.json")
+=======
+COMBOS_FILE = os.path.join(os.path.dirname(__file__), "saved_combos.json")
+>>>>>>> 6f13ce0 (initial commit with all files)
 def load_saved_combos():
     if os.path.exists(COMBOS_FILE):
         try:
             with open(COMBOS_FILE, "r") as f: return json.load(f)
+<<<<<<< HEAD
         except (json.JSONDecodeError, IOError): return []
+=======
+        except: return []
+>>>>>>> 6f13ce0 (initial commit with all files)
     return []
 def save_combos(combos):
     with open(COMBOS_FILE, "w") as f: json.dump(combos, f, indent=2)
@@ -328,7 +364,11 @@ def get_env_state():
             with open(os.path.join(data_dir, price_files[0]), 'r') as f:
                 header = next(csv.reader(f), [])
                 is_merged = "DeliveryVolume" in header
+<<<<<<< HEAD
         except (IOError, StopIteration): pass
+=======
+        except: pass
+>>>>>>> 6f13ce0 (initial commit with all files)
         
     return {
         "has_prices": has_prices,
@@ -342,6 +382,7 @@ if "page" not in st.session_state: st.session_state.page = "scans"
 if "active_scan" not in st.session_state: st.session_state.active_scan = None
 if "active_combo" not in st.session_state: st.session_state.active_combo = None
 if "creating_combo" not in st.session_state: st.session_state.creating_combo = False
+<<<<<<< HEAD
 if "selected_sector" not in st.session_state: st.session_state.selected_sector = None
 
 # ─── Pre-load sectors so selected_sector is always defined before sidebar renders ─
@@ -349,6 +390,8 @@ _all_sectors = get_available_sectors()
 if not _all_sectors:
     st.error("❌ No sector files found in NAMES/ folder. Please add at least one .csv sector file.")
     st.stop()
+=======
+>>>>>>> 6f13ce0 (initial commit with all files)
 
 with st.sidebar:
     st.markdown('<div class="sidebar-logo">TERMINAL_v1.2</div>', unsafe_allow_html=True)
@@ -368,7 +411,11 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+<<<<<<< HEAD
     sectors = _all_sectors
+=======
+    sectors = get_available_sectors()
+>>>>>>> 6f13ce0 (initial commit with all files)
     selected_sector = st.selectbox("REGION_SELECT", sectors, index=0)
     st.markdown("---")
     
@@ -398,6 +445,7 @@ with st.sidebar:
             st.success(f"SUCCESS: {count} STOCKS READY")
             st.rerun()
 
+<<<<<<< HEAD
     # ─── ENGINE DIAGNOSTICS ──────────────────────────────────────────────────
     with st.sidebar.expander("🛠️ ENGINE_DIAGNOSTICS"):
         st.write(f"**BASE_DIR:** `{BASE_DIR}`")
@@ -415,6 +463,10 @@ with st.sidebar:
 # ─── Load symbols and run screener (outside sidebar, uses selected_sector from above) ─
 symbols = load_symbols(selected_sector)
 data_dir = os.path.join(BASE_DIR, "data")  # Always use BASE_DIR, not __file__ inline
+=======
+symbols = load_symbols(selected_sector)
+data_dir = os.path.join(os.path.dirname(__file__), "data")
+>>>>>>> 6f13ce0 (initial commit with all files)
 results = []
 if symbols and os.path.exists(data_dir):
     with st.spinner("EXECUTING_ENGINE..."): results = run_screener(symbols, data_dir)
