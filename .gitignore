@@ -2,6 +2,6 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# Depending on your preference, you can uncomment the next line to ignore the downloaded stock data CSV files 
-# so your GitHub repository stays clean. Your app can just re-download them using the sidebar button!
-# data/
+# Stock Data (Downloaded locally - re-downloaded in cloud)
+data/
+delivery_data/

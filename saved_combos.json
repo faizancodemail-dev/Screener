@@ -1,0 +1,24 @@
+[
+  {
+    "name": "52 week breakout + RS Positive",
+    "scans": [
+      "1Y_breakout",
+      "rs_123d"
+    ]
+  },
+  {
+    "name": "All time high + RS positive",
+    "scans": [
+      "AT_breakout",
+      "rs_55w"
+    ]
+  },
+  {
+    "name": "52 week breakout with volume confirmation",
+    "scans": [
+      "1Y_near_high",
+      "rs_123d",
+      "deliv_vol_weekly"
+    ]
+  }
+]
