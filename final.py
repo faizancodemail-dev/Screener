@@ -8,7 +8,7 @@ import base64
 from screener import Stock, Data_fetcher, Screener, download_data, merge_delivery_data, download_bhavcopies, run_screener
 
 # ─── Directory Initialization ──────────────────────────────────────────────────
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 for folder in ["NAMES", "data", "icons"]:
     os.makedirs(os.path.join(BASE_DIR, folder), exist_ok=True)
 
@@ -195,9 +195,8 @@ st.markdown("""
 
 def get_available_sectors():
     sectors = []
-    # Force absolute path detection for Cloud
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    names_dir = os.path.join(current_dir, "NAMES")
+    # Use global BASE_DIR for consistency
+    names_dir = os.path.join(BASE_DIR, "NAMES")
     
     if os.path.exists(names_dir):
         for f in os.listdir(names_dir):
@@ -208,9 +207,8 @@ def get_available_sectors():
 
 def load_symbols(sector):
     symbols = []
-    current_dir = os.path.dirname(os.path.abspath(__file__))
     # Linux is case-sensitive! We must append .csv exactly.
-    filepath = os.path.join(current_dir, "NAMES", f"{sector}.csv")
+    filepath = os.path.join(BASE_DIR, "NAMES", f"{sector}.csv")
     
     if os.path.exists(filepath):
         with open(filepath, "r") as file:
@@ -288,7 +286,7 @@ for cat_key, cat in SCAN_CATEGORIES.items():
 def _get_icon_b64(data_key):
     for ext, mime in [(".svg", "image/svg+xml"), (".png", "image/png")]:
         safe_name = data_key.replace(":", "").replace("/", "").replace("%", "pct").replace(">", "gt").replace(" ", "_")
-        icon_path = os.path.join(os.path.dirname(__file__), "icons", f"{safe_name}{ext}")
+        icon_path = os.path.join(BASE_DIR, "icons", f"{safe_name}{ext}")
         if os.path.exists(icon_path):
             with open(icon_path, "rb") as f: return f"data:{mime};base64,{base64.b64encode(f.read()).decode('utf-8')}"
     return None
@@ -298,7 +296,7 @@ def _count_all_scans_in_category(cat):
     for sub in cat.get("subcategories", {}).values(): count += len(sub["scans"])
     return count
 
-COMBOS_FILE = os.path.join(os.path.dirname(__file__), "saved_combos.json")
+COMBOS_FILE = os.path.join(BASE_DIR, "saved_combos.json")
 def load_saved_combos():
     if os.path.exists(COMBOS_FILE):
         try:
