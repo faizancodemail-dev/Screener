@@ -136,6 +136,17 @@ st.markdown("""
 
     hr { border-color: #30363d !important; }
 
+    /* System Health Status */
+    .health-card {
+        background: #161b22; border: 1px solid #30363d; border-radius: 4px;
+        padding: 0.8rem; margin-bottom: 1rem;
+    }
+    .health-item { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-bottom: 4px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-ok { background: #39d353; box-shadow: 0 0 8px #39d353; }
+    .status-empty { background: #f85149; box-shadow: 0 0 8px #f85149; }
+    .status-warn { background: #fbbf24; }
+
     /* Category List Styles */
     .scan-category-row {
         background: #161b22; border: 1px solid #30363d; padding: 1rem;
@@ -281,6 +292,38 @@ def load_saved_combos():
 def save_combos(combos):
     with open(COMBOS_FILE, "w") as f: json.dump(combos, f, indent=2)
 
+# ─── Environment & State Detection ───────────────────────────────────────────
+
+def get_env_state():
+    """Detect the current state of data files."""
+    data_dir = os.path.join(BASE_DIR, "data")
+    delivery_dir = os.path.join(BASE_DIR, "delivery_data")
+    
+    # 1. Price Data Check
+    price_files = [f for f in os.listdir(data_dir) if f.endswith(".csv") and not f.startswith("^")] if os.path.exists(data_dir) else []
+    has_prices = len(price_files) > 0
+    
+    # 2. Delivery Data Check
+    deliv_files = [f for f in os.listdir(delivery_dir) if f.endswith(".csv")] if os.path.exists(delivery_dir) else []
+    has_delivery = len(deliv_files) > 0
+    
+    # 3. Merged Check (check if first file has DeliveryVolume)
+    is_merged = False
+    if has_prices:
+        try:
+            with open(os.path.join(data_dir, price_files[0]), 'r') as f:
+                header = next(csv.reader(f), [])
+                is_merged = "DeliveryVolume" in header
+        except: pass
+        
+    return {
+        "has_prices": has_prices,
+        "price_count": len(price_files),
+        "has_delivery": has_delivery,
+        "deliv_count": len(deliv_files),
+        "is_merged": is_merged
+    }
+
 if "page" not in st.session_state: st.session_state.page = "scans"
 if "active_scan" not in st.session_state: st.session_state.active_scan = None
 if "active_combo" not in st.session_state: st.session_state.active_combo = None
@@ -292,20 +335,47 @@ with st.sidebar:
     if st.button("SYS_COMBOS", use_container_width=True): st.session_state.page = "combos"; st.session_state.active_scan = None; st.session_state.active_combo = None; st.rerun()
     st.markdown("---")
     st.markdown("### DATA_OPS")
+    
+    state = get_env_state()
+    
+    # Display System Health
+    st.markdown(f"""
+    <div class="health-card">
+        <div class="health-item"><div class="status-dot {'status-ok' if state['has_prices'] else 'status-empty'}"></div> PRICES: {'READY' if state['has_prices'] else 'MISSING'}</div>
+        <div class="health-item"><div class="status-dot {'status-ok' if state['has_delivery'] else 'status-empty'}"></div> DELIVERY: {'READY' if state['has_delivery'] else 'MISSING'}</div>
+        <div class="health-item"><div class="status-dot {'status-ok' if state['is_merged'] else 'status-empty'}"></div> ENGINE: {'STABLE' if state['is_merged'] else 'PENDING'}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
     sectors = get_available_sectors()
     selected_sector = st.selectbox("REGION_SELECT", sectors, index=0)
     st.markdown("---")
-    if st.button("DOWNLOAD_FRESH", use_container_width=True):
+    
+    # --- STEP 1: DOWNLOAD PRICES ---
+    if st.button("STEP_1: FETCH_PRICES", use_container_width=True):
         symbols_to_download = load_symbols(selected_sector)
         if symbols_to_download:
             p = st.progress(0); s = st.empty()
             def up(sym, i, tot): s.text(f"FETCHING {sym}..."); p.progress((i+1)/tot)
-            download_data(symbols_to_download, os.path.join(BASE_DIR, "data"), 10, up)
+            count = download_data(symbols_to_download, os.path.join(BASE_DIR, "data"), 10, up)
+            st.success(f"SUCCESS: {count} SYMBOLS SYNCED")
             st.rerun()
-    if st.button("DOWNLOAD_BHAV", use_container_width=True):
-        with st.spinner("FETCHING..."): download_bhavcopies(365); st.rerun()
-    if st.button("MERGE_DELIVERY", use_container_width=True):
-        with st.spinner("MERGING..."): merge_delivery_data(os.path.join(BASE_DIR, "data"), os.path.join(BASE_DIR, "delivery_data")); st.rerun()
+            
+    # --- STEP 2: DOWNLOAD DELIVERY ---
+    btn_deliv_disabled = not state['has_prices']
+    if st.button("STEP_2: FETCH_DELIVERY", use_container_width=True, disabled=btn_deliv_disabled):
+        with st.spinner("FETCHING BHAVCOPIES..."):
+            success, fails = download_bhavcopies(365)
+            st.success(f"SUCCESS: {success} FILES FETCHED")
+            st.rerun()
+            
+    # --- STEP 3: MERGE DATA ---
+    btn_merge_disabled = not (state['has_prices'] and state['has_delivery'])
+    if st.button("STEP_3: MERGE_ENGINE", use_container_width=True, disabled=btn_merge_disabled):
+        with st.spinner("INTEGRATING DATA..."):
+            count = merge_delivery_data(os.path.join(BASE_DIR, "data"), os.path.join(BASE_DIR, "delivery_data"))
+            st.success(f"SUCCESS: {count} STOCKS READY")
+            st.rerun()
 
 symbols = load_symbols(selected_sector)
 data_dir = os.path.join(os.path.dirname(__file__), "data")
