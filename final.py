@@ -141,7 +141,10 @@ st.markdown("""
         background: #161b22; border: 1px solid #30363d; border-radius: 4px;
         padding: 0.8rem; margin-bottom: 1rem;
     }
-    .health-item { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-bottom: 4px; }
+    .health-item { 
+        display: flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-bottom: 4px;
+        color: #f0f6fc !important; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+    }
     .status-dot { width: 8px; height: 8px; border-radius: 50%; }
     .status-ok { background: #39d353; box-shadow: 0 0 8px #39d353; }
     .status-empty { background: #f85149; box-shadow: 0 0 8px #f85149; }
