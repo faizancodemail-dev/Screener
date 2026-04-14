@@ -5,7 +5,7 @@ import json
 import base64
 
 # ─── Import classes from your existing screener.py ───────────────────────────
-from screener import Stock, Data_fetcher, Screener, download_data, merge_delivery_data, download_bhavcopies, run_screener
+from screener import Stock, Data_fetcher, Screener, download_data, run_screener
 
 # ─── Directory Initialization ──────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +30,7 @@ st.markdown("""
 
     .stApp { 
         background-color: #0d1117;
-        color: #c9d1d9;
+        color: #f0f6fc;
     }
 
     .main-header {
@@ -40,8 +40,8 @@ st.markdown("""
         margin-bottom: 1.5rem;
         border-left: 6px solid #2dd4bf;
     }
-    .main-header h1 { color: #f0f6fc; font-size: 1.5rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-    .main-header p { color: #8b949e; font-size: 0.82rem; margin-top: 6px; font-weight: 500; }
+    .main-header h1 { color: #ffffff; font-size: 1.5rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+    .main-header p { color: #c9d1d9; font-size: 0.82rem; margin-top: 6px; font-weight: 500; }
 
     .stat-card {
         background: #161b22; border-radius: 4px; padding: 1.4rem 1.2rem;
@@ -50,8 +50,8 @@ st.markdown("""
     .stat-card-blue { border-left: 4px solid #58a6ff; }
     .stat-card-green { border-left: 4px solid #2dd4bf; }
     .stat-card-purple { border-left: 4px solid #fbbf24; }
-    .stat-number { font-size: 2rem; font-weight: 700; color: #f0f6fc; font-family: 'JetBrains Mono', monospace; }
-    .stat-label { color: #8b949e; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; }
+    .stat-number { font-size: 2rem; font-weight: 700; color: #ffffff; font-family: 'JetBrains Mono', monospace; }
+    .stat-label { color: #c9d1d9; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 6px; }
 
     .tag-breakout {
         background: #0d1117; color: #2dd4bf; padding: 3px 10px; border-radius: 2px;
@@ -63,7 +63,7 @@ st.markdown("""
         width: 100%; border-collapse: collapse; border: 1px solid #30363d; background: #0d1117;
     }
     .clean-table thead th {
-        background: #161b22; color: #8b949e; padding: 14px; font-weight: 700;
+        background: #161b22; color: #c9d1d9; padding: 14px; font-weight: 700;
         font-size: 0.72rem; text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
         text-align: left; border-bottom: 2px solid #30363d; border-right: 1px solid #30363d;
     }
@@ -130,11 +130,39 @@ st.markdown("""
     }
 
     .stSelectbox div[data-baseweb="select"] > div {
-        background-color: #0d1117; border: 1px solid #30363d; border-radius: 4px; color: #f0f6fc !important;
+        background-color: #0d1117; border: 1px solid #30363d; border-radius: 4px; color: #ffffff !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
 
+    /* Target all Streamlit labels to ensure they are bright */
+    [data-testid="stWidgetLabel"] p, label, .stMarkdown p {
+        color: #f0f6fc !important;
+        opacity: 1 !important;
+    }
+
     hr { border-color: #30363d !important; }
+
+    /* Expander Dark Theme */
+    [data-testid="stExpander"] {
+        background: #161b22 !important;
+        border: 1px solid #30363d !important;
+        border-radius: 4px !important;
+    }
+    [data-testid="stExpander"] summary p,
+    [data-testid="stExpander"] summary > span:not([data-testid="stExpanderToggleIcon"]) {
+        color: #c9d1d9 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 700 !important;
+        font-size: 0.78rem !important;
+        background: transparent !important;
+    }
+    [data-testid="stExpanderToggleIcon"] {
+        color: #c9d1d9 !important;
+    }
+    [data-testid="stExpander"] details {
+        background: #0d1117 !important;
+        border: none !important;
+    }
 
     /* System Health Status */
     .health-card {
@@ -159,8 +187,8 @@ st.markdown("""
     }
     .scan-category-row:hover { background: #1c2128; border-color: #58a6ff; }
     .scan-cat-left { display: flex; align-items: center; gap: 1rem; }
-    .scan-cat-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #f0f6fc; font-size: 0.95rem; }
-    .scan-cat-desc { font-size: 0.75rem; color: #8b949e; }
+    .scan-cat-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #ffffff; font-size: 0.95rem; }
+    .scan-cat-desc { font-size: 0.75rem; color: #c9d1d9; }
     .scan-cat-count { font-size: 0.78rem; color: #2dd4bf; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
     .scan-cat-icon { width: 40px; height: 40px; background: #0d1117; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #30363d; }
 
@@ -177,16 +205,60 @@ st.markdown("""
 
     /* Terminal-style Insight Icons Fix */
     .insight-tag {
-        background: #ced4da;
-        padding: 2px 4px;
-        border-radius: 2px;
+        background: rgba(66, 75, 84, 0.2);
+        padding: 4px 6px;
+        border-radius: 4px;
         display: inline-flex;
         align-items: center;
-        margin-right: 4px;
-        border: 1px solid #adb5bd;
+        margin-right: 6px;
+        border: 1px solid rgba(88, 166, 255, 0.2);
     }
     .insight-tag img {
         filter: brightness(0.9);
+    }
+
+    .subcategory-header {
+        color: #2dd4bf; 
+        font-family: 'JetBrains Mono', monospace; 
+        font-size: 0.8rem; 
+        font-weight: 800;
+        margin: 1.5rem 0 0.8rem 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #1c2128;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .scan-item-container {
+        display: flex; 
+        align-items: center; 
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #161b22;
+    }
+    .scan-item-icon {
+        width: 36px;
+        height: 36px;
+        background: #0d1117;
+        border-radius: 4px;
+        border: 1px solid #30363d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+    }
+    .scan-item-details {
+        flex-grow: 1;
+    }
+    .scan-item-title {
+        color: #f0f6fc;
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .scan-item-desc {
+        color: #8b949e;
+        font-size: 0.72rem;
+        margin-top: 2px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -221,7 +293,8 @@ def load_symbols(sector):
                     if not sym.endswith(".NS") and "^" not in sym:
                         sym += ".NS"
                     symbols.append(sym)
-    return symbols
+    # Remove duplicates while preserving order
+    return list(dict.fromkeys(symbols))
 
 
 # ─── Scan / Filter Definitions ──────────────────────────────────────────────
@@ -260,19 +333,13 @@ SCAN_CATEGORIES = {
         "title": "PRICE_ENGINE", "desc": "Technical level monitoring.", "icon": "📊", "css_class": "price",
         "subcategories": PRICE_SUBCATEGORIES, "scans": [],
     },
-    "volume": {
-        "title": "VOL_DELIVERY", "desc": "Volume & Delivery analysis.", "icon": "⚡", "css_class": "volume",
-        "scans": [
-            ("deliv_pct_daily",   "DELIVERY_% (D)", "Today > 1Y Avg", "Delivery % Higher Annual"),
-            ("deliv_vol_daily",   "DELIVERY_VOL (D)", "Today > 1Y Avg", "Delivery Vol Higher Annual"),
-            ("deliv_pct_weekly",  "DELIVERY_% (W)", "5D Avg > 1Y Avg", "Weekly Delivery % > Avg"),
-            ("deliv_vol_weekly",  "DELIVERY_VOL (W)", "5D Total > 1Y Avg", "Weekly Delivery Vol > Avg"),
-            ("deliv_pct_monthly", "DELIVERY_% (M)", "21D Avg > 1Y Avg", "Monthly Delivery % > Avg"),
-            ("deliv_vol_monthly", "DELIVERY_VOL (M)", "21D Total > 1Y Avg", "Monthly Delivery Vol > Avg"),
-            ("tvol_daily",        "TRADE_VOL (D)", "Today > 1Y Avg", "Volume Higher Annual"),
-            ("tvol_weekly",       "TRADE_VOL (W)", "5D Total > 1Y Avg", "Weekly Volume > Avg"),
-            ("tvol_monthly",      "TRADE_VOL (M)", "21D Total > 1Y Avg", "Monthly Volume > Avg"),
-        ],
+    "technical": {
+        "title": "TECHNICAL_ENGINE", "desc": "Indicator-based signals.", "icon": "📈", "css_class": "technical",
+        "scans": [], "coming_soon": True,
+    },
+    "fundamental": {
+        "title": "FUNDAMENTAL_ENGINE", "desc": "Financial data analysis.", "icon": "🏦", "css_class": "fundamental",
+        "scans": [], "coming_soon": True,
     },
 }
 
@@ -294,8 +361,32 @@ def _get_icon_b64(data_key):
 
 def _count_all_scans_in_category(cat):
     count = len(cat.get("scans", []))
-    for sub in cat.get("subcategories", {}).values(): count += len(sub["scans"])
+    for sub in cat.get("subcategories", {}).values():
+        count += len(sub["scans"])
     return count
+
+def render_scan_item(s_key, s_lab, s_desc, s_data_key):
+    """Helper to render a single scan row with icon and execute button."""
+    icon_b64 = _get_icon_b64(s_data_key)
+    c1, c2 = st.columns([5, 1])
+    with c1:
+        icon_html = f'<img src="{icon_b64}" width="22">' if icon_b64 else '🔍'
+        st.markdown(f"""
+        <div class="scan-item-container">
+            <div class="scan-item-icon">{icon_html}</div>
+            <div class="scan-item-details">
+                <div class="scan-item-title">{s_lab}</div>
+                <div class="scan-item-desc">{s_desc}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        # Move vertically to align with the middle of the row
+        st.markdown('<div style="margin-top: 8px;">', unsafe_allow_html=True)
+        if st.button("EXEC ›", key=f"run_{s_key}"):
+            st.session_state.active_scan = s_key
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
 COMBOS_FILE = os.path.join(BASE_DIR, "saved_combos.json")
 def load_saved_combos():
@@ -312,31 +403,14 @@ def save_combos(combos):
 def get_env_state():
     """Detect the current state of data files."""
     data_dir = os.path.join(BASE_DIR, "data")
-    delivery_dir = os.path.join(BASE_DIR, "delivery_data")
     
-    # 1. Price Data Check
+    # Price Data Check
     price_files = [f for f in os.listdir(data_dir) if f.endswith(".csv") and not f.startswith("^")] if os.path.exists(data_dir) else []
     has_prices = len(price_files) > 0
-    
-    # 2. Delivery Data Check
-    deliv_files = [f for f in os.listdir(delivery_dir) if f.endswith(".csv")] if os.path.exists(delivery_dir) else []
-    has_delivery = len(deliv_files) > 0
-    
-    # 3. Merged Check (check if first file has DeliveryVolume)
-    is_merged = False
-    if has_prices:
-        try:
-            with open(os.path.join(data_dir, price_files[0]), 'r') as f:
-                header = next(csv.reader(f), [])
-                is_merged = "DeliveryVolume" in header
-        except (IOError, StopIteration): pass
         
     return {
         "has_prices": has_prices,
         "price_count": len(price_files),
-        "has_delivery": has_delivery,
-        "deliv_count": len(deliv_files),
-        "is_merged": is_merged
     }
 
 if "page" not in st.session_state: st.session_state.page = "scans"
@@ -355,6 +429,7 @@ with st.sidebar:
     st.markdown('<div class="sidebar-logo">TERMINAL_v1.2</div>', unsafe_allow_html=True)
     if st.button("SYS_SCANS", use_container_width=True): st.session_state.page = "scans"; st.session_state.active_scan = None; st.rerun()
     if st.button("SYS_COMBOS", use_container_width=True): st.session_state.page = "combos"; st.session_state.active_scan = None; st.session_state.active_combo = None; st.rerun()
+    if st.button("SYS_BACKTEST", use_container_width=True): st.session_state.page = "backtest"; st.session_state.active_scan = None; st.session_state.active_combo = None; st.rerun()
     st.markdown("---")
     st.markdown("### DATA_OPS")
     
@@ -364,8 +439,7 @@ with st.sidebar:
     st.markdown(f"""
     <div class="health-card">
         <div class="health-item"><div class="status-dot {'status-ok' if state['has_prices'] else 'status-empty'}"></div> PRICES: {'READY' if state['has_prices'] else 'MISSING'}</div>
-        <div class="health-item"><div class="status-dot {'status-ok' if state['has_delivery'] else 'status-empty'}"></div> DELIVERY: {'READY' if state['has_delivery'] else 'MISSING'}</div>
-        <div class="health-item"><div class="status-dot {'status-ok' if state['is_merged'] else 'status-empty'}"></div> ENGINE: {'STABLE' if state['is_merged'] else 'PENDING'}</div>
+        <div class="health-item"><div class="status-dot {'status-ok' if state['has_prices'] else 'status-empty'}"></div> ENGINE: {'STABLE' if state['has_prices'] else 'PENDING'}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -381,22 +455,6 @@ with st.sidebar:
             def up(sym, i, tot): s.text(f"FETCHING {sym}..."); p.progress((i+1)/tot)
             count = download_data(symbols_to_download, os.path.join(BASE_DIR, "data"), 10, up)
             st.success(f"SUCCESS: {count} SYMBOLS SYNCED")
-            st.rerun()
-            
-    # --- STEP 2: DOWNLOAD DELIVERY ---
-    btn_deliv_disabled = not state['has_prices']
-    if st.button("STEP_2: FETCH_DELIVERY", use_container_width=True, disabled=btn_deliv_disabled):
-        with st.spinner("FETCHING BHAVCOPIES..."):
-            success, fails = download_bhavcopies(365)
-            st.success(f"SUCCESS: {success} FILES FETCHED")
-            st.rerun()
-            
-    # --- STEP 3: MERGE DATA ---
-    btn_merge_disabled = not (state['has_prices'] and state['has_delivery'])
-    if st.button("STEP_3: MERGE_ENGINE", use_container_width=True, disabled=btn_merge_disabled):
-        with st.spinner("INTEGRATING DATA..."):
-            count = merge_delivery_data(os.path.join(BASE_DIR, "data"), os.path.join(BASE_DIR, "delivery_data"))
-            st.success(f"SUCCESS: {count} STOCKS READY")
             st.rerun()
 
     # ─── ENGINE DIAGNOSTICS ──────────────────────────────────────────────────
@@ -416,14 +474,18 @@ with st.sidebar:
 # ─── Load symbols and run screener (outside sidebar, uses selected_sector from above) ─
 symbols = load_symbols(selected_sector)
 data_dir = os.path.join(BASE_DIR, "data")  # Always use BASE_DIR, not __file__ inline
+
+@st.cache_data(ttl=300, show_spinner="EXECUTING_ENGINE...")
+def _cached_screener(syms, d_dir):
+    return run_screener(list(syms), d_dir)
+
 results = []
 if symbols and os.path.exists(data_dir):
-    with st.spinner("EXECUTING_ENGINE..."): results = run_screener(symbols, data_dir)
+    results = _cached_screener(tuple(symbols), data_dir)
 
 _PERIOD_COLUMNS = {
-    "1y": [("1Y_HIGH", "1Y High", "price"), ("%_DIV", "% From 1Y High", "pct")],
-    "at": [("AT_HIGH", "AT High", "price"), ("%_DIV", "% From AT High", "pct")],
-    "volume": [("DELIV_%", "Curr Delivery %", "pct"), ("TRADED_VOL", "Curr Traded Vol", "num")],
+    "1y": [("1Y_HIGH", "1Y High", "price"), ("%_FROM_HIGH", "% From 1Y High", "pct")],
+    "at": [("AT_HIGH", "AT High", "price"), ("%_FROM_HIGH", "% From AT High", "pct")],
 }
 _DEFAULT_COLUMNS = _PERIOD_COLUMNS["at"]
 
@@ -493,12 +555,30 @@ elif st.session_state.page == "scans":
         st.markdown('<div class="main-header"><h1>[ SYSTEM_SCANS ]</h1></div>', unsafe_allow_html=True)
         for cat_key, cat in SCAN_CATEGORIES.items():
             cat_icon = _get_icon_b64(f"Category_{cat_key}")
-            st.markdown(f'<div class="scan-category-row"><div class="scan-cat-left"><div class="scan-cat-icon">{f"<img src={cat_icon} width=24>" if cat_icon else cat["icon"]}</div><b>{cat["title"]}</b></div><span class="scan-cat-count">{_count_all_scans_in_category(cat)} Ready</span></div>', unsafe_allow_html=True)
-            with st.expander(f"EXECUTE_{cat['title']}"):
-                for s_key, s_lab, s_desc, _ in (cat["scans"] or sum([sc["scans"] for sc in cat.get("subcategories",{}).values()], [])):
-                    c1, c2 = st.columns([5,1])
-                    c1.markdown(f"**{s_lab}**\n\n{s_desc}")
-                    if c2.button("EXEC ›", key=f"run_{s_key}"): st.session_state.active_scan = s_key; st.rerun()
+            is_coming_soon = cat.get("coming_soon", False)
+            count_label = "COMING SOON" if is_coming_soon else f"{_count_all_scans_in_category(cat)} Ready"
+            count_color = "#fbbf24" if is_coming_soon else "#2dd4bf"
+            st.markdown(f'<div class="scan-category-row"><div class="scan-cat-left"><div class="scan-cat-icon">{f"<img src={cat_icon} width=24>" if cat_icon else cat["icon"]}</div><b>{cat["title"]}</b></div><span class="scan-cat-count" style="color:{count_color};">{count_label}</span></div>', unsafe_allow_html=True)
+            
+            if is_coming_soon:
+                with st.expander(f"{cat['title']}", expanded=False):
+                    st.markdown(f"""
+                    <div style="text-align:center; padding: 2rem 1rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">{cat['icon']}</div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1.1rem; color: #fbbf24; letter-spacing: 2px;">COMING SOON</div>
+                        <div style="color: #8b949e; font-size: 0.8rem; margin-top: 0.5rem;">{cat['desc']}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+            else:
+                with st.expander(f"EXECUTE_{cat['title']}", expanded=(cat_key == "price")):
+                    if cat.get("subcategories"):
+                        for sub_key, sub in cat["subcategories"].items():
+                            with st.expander(f"─ {sub['title']}", expanded=False):
+                                for s_key, s_lab, s_desc, s_dk in sub["scans"]:
+                                    render_scan_item(s_key, s_lab, s_desc, s_dk)
+                    else:
+                        for s_key, s_lab, s_desc, s_dk in cat["scans"]:
+                            render_scan_item(s_key, s_lab, s_desc, s_dk)
 
 elif st.session_state.page == "combos":
     saved = load_saved_combos()
@@ -525,6 +605,21 @@ elif st.session_state.page == "combos":
             cl_r, cl_d = st.columns([4,1])
             if cl_r.button(f"EXECUTE {c['name']}", key=f"r_{idx}"): st.session_state.active_combo = c["name"]; st.rerun()
             if cl_d.button("🗑", key=f"d_{idx}"): saved.pop(idx); save_combos(saved); st.rerun()
+
+elif st.session_state.page == "backtest":
+    st.markdown('<div class="main-header"><h1>[ BACKTEST_ENGINE ]</h1></div>', unsafe_allow_html=True)
+    
+    st.markdown(f"""
+    <div style="text-align:center; padding: 2rem 1rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.8rem;">⚙️</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1.5rem; color: #fbbf24; letter-spacing: 2px;">COMING SOON</div>
+        <div style="color: #8b949e; font-size: 0.85rem; margin-top: 0.5rem;">The Backtesting Engine is currently under development.</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    img_path = os.path.join(BASE_DIR, "icons", "backtest_preview.png")
+    if os.path.exists(img_path):
+        st.image(img_path, use_container_width=True, caption="Preview of upcoming Backtest Terminal")
 
 st.markdown("---")
 st.markdown("<div style='text-align:center; color:#484f58; font-family:JetBrains Mono;'>SYSTEM_STABLE // BUILD_4A4</div>", unsafe_allow_html=True)
