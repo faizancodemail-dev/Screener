@@ -28,11 +28,6 @@ class Data_fetcher:
 
     #since we already have data folder name we will construct the path and if it exists we will open the symbol.csv with dictread and read its close values and convert them in float and append the price = [] that we will create 
 
-    def fetch_price(self, symbol):
-        """Backwards compatibility for fetching just prices."""
-        data = self.fetch_full_data(symbol)
-        return data.get("Close", [])
-
     def fetch_full_data(self, symbol):
         """Fetch Close prices from the CSV."""
         data = {"Close": []}
@@ -59,6 +54,11 @@ class Data_fetcher:
                 except (ValueError, IndexError):
                     continue
         return data
+
+    def fetch_price(self, symbol):
+        """Backwards compatibility for fetching just prices."""
+        data = self.fetch_full_data(symbol)
+        return data.get("Close", [])
 
 def download_data(symbols, datafolder, time_frame=1, on_progress=None):
     """Download stock data from Yahoo Finance.
