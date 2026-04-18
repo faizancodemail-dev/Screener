@@ -5,7 +5,7 @@ import json
 import base64
 
 # ─── Import classes from your existing screener.py ───────────────────────────
-from screener import Stock, Data_fetcher, Screener, download_data, run_screener
+from screener import download_data, run_screener
 
 # ─── Directory Initialization ──────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

@@ -38,12 +38,12 @@ class Data_fetcher:
 
         with open(filepath, 'r') as file:
             reader = csv.reader(file)
-            header1 = next(reader, [])
-            header2 = next(reader, [])
-            header3 = next(reader, [])
+            header = next(reader, [])
+            next(reader, None)
+            next(reader, None)
 
             try:
-                close_idx = header1.index("Close")
+                close_idx = header.index("Close")
             except ValueError:
                 close_idx = 1
 
@@ -82,31 +82,6 @@ def download_data(symbols, datafolder, time_frame=1, on_progress=None):
 
     return total
 
-
-class Screener:
-    def __init__(self, symbols, datafolder):
-        self.symbols = symbols
-        self.fetcher= Data_fetcher(datafolder)
-
-    def run(self):
-
-        breakout_stocks = []
-
-        for symbol in self.symbols:
-
-            stock = Stock(symbol)
-
-            prices = self.fetcher.fetch_price(symbol)  # got our prices from the csv
-
-            if (len(prices)==0):
-                continue
-            else:
-                stock.set_price(prices)
-
-            if stock.is_breakout():
-                breakout_stocks.append(symbol)
-
-        return breakout_stocks
 
 TRADING_DAYS_PER_YEAR = 252
 
@@ -243,11 +218,13 @@ if __name__ == "__main__":
     else :
         print("Data folder already exists. skipping downloads")
 
-    # --- got all the required data so getting screener requirements ---
+    # --- Run the master engine and filter for All-Time Breakouts ---
+    all_results = run_screener(symbols, datafolder)
+    result = []
+    for r in all_results:
+        if r.get("AT Breakout") == True:
+            result.append(r["Full Symbol"])
 
-    screener = Screener(symbols, datafolder)
-
-    result = screener.run()
 
     with open("screener_output.csv", mode="w", newline="") as file:
 
