@@ -189,9 +189,16 @@ def run_screener(symbols, data_dir):
 if __name__ == "__main__":
 
     # ---- selecting the time frame and sector ----
+    print("\n--- AVAILABLE SECTORS ---")
+    for f in os.listdir('NAMES'):
+        if f.endswith('.csv'):
+            print(f" - {f.replace('.csv', '')}")
 
-    mode = int(input("enter the time frame:"))
-    sector = input("enter the sector")
+    print("\n--- SUGGESTED TIME FRAMES ---")
+    print(" 1, 2, 5, 10 (years)")
+
+    mode = int(input("\nEnter the time frame: "))
+    sector = input("Enter the sector: ")
 
     # ---- getting required data ---- 
 
