@@ -405,7 +405,15 @@ def get_env_state():
     data_dir = os.path.join(BASE_DIR, "data")
     
     # Price Data Check
-    price_files = [f for f in os.listdir(data_dir) if f.endswith(".csv") and not f.startswith("^")] if os.path.exists(data_dir) else []
+    price_files = []
+    if os.path.exists(data_dir):
+        for f in os.listdir(data_dir):
+            if f.endswith(".csv") and not f.startswith("^"):
+                filepath = os.path.join(data_dir, f)
+                # Check if file has actual data (not just headers, usually > 200 bytes)
+                if os.path.getsize(filepath) > 200:
+                    price_files.append(f)
+        
     has_prices = len(price_files) > 0
         
     return {
