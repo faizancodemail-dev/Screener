@@ -463,6 +463,7 @@ with st.sidebar:
             def up(sym, i, tot): s.text(f"FETCHING {sym}..."); p.progress((i+1)/tot)
             count = download_data(symbols_to_download, os.path.join(BASE_DIR, "data"), 10, up)
             st.success(f"SUCCESS: {count} SYMBOLS SYNCED")
+            _cached_screener.clear()  # Flush stale engine cache so new data is picked up
             st.rerun()
 
     # ─── ENGINE DIAGNOSTICS ──────────────────────────────────────────────────

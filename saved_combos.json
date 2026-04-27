@@ -6,5 +6,12 @@
       "1Y_near_high",
       "rs_55w"
     ]
+  },
+  {
+    "name": "near all time high",
+    "scans": [
+      "AT_near_high",
+      "rs_55w"
+    ]
   }
 ]
